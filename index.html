@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>إدارة الإبل</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{--bg:#0a0a0a;--card:#161616;--border:#2a2a2a;--text:#f5f5f5;--muted:#888;--green:#4ade80;--red:#f87171;--yellow:#fbbf24;--blue:#60a5fa;--orange:#fb923c;--purple:#a78bfa}
+html,body{background:var(--bg);color:var(--text);font-family:'Tajawal',sans-serif;min-height:100vh}
+#app{max-width:600px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column}
+.topbar{background:#111;border-bottom:1px solid var(--border);padding:12px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.topbar-title{font-size:16px;font-weight:800}
+.tabs{display:flex;overflow-x:auto;background:#111;border-bottom:1px solid var(--border);scrollbar-width:none;position:sticky;top:49px;z-index:99}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex:1;padding:10px 6px;font-size:13px;font-family:'Tajawal',sans-serif;cursor:pointer;border:none;background:transparent;color:var(--muted);border-bottom:2px solid transparent;white-space:nowrap;text-align:center}
+.tab.active{color:#fff;border-bottom-color:#fff;font-weight:700}
+.content{flex:1;padding:14px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:10px}
+.row{display:flex;align-items:center;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border)}
+.row:last-child{border-bottom:none}
+.lbl{color:var(--muted);font-size:13px}
+.val{font-size:14px;font-weight:600}
+.badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700}
+.bg-green{background:#14532d;color:var(--green)}
+.bg-blue{background:#0c1a2e;color:var(--blue)}
+.bg-yellow{background:#451a03;color:var(--yellow)}
+.bg-red{background:#450a0a;color:var(--red)}
+.bg-purple{background:#2e1065;color:var(--purple)}
+.bg-orange{background:#431407;color:var(--orange)}
+.bg-gray{background:#1f2937;color:var(--muted)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:5px;padding:8px 14px;border-radius:8px;border:none;font-family:'Tajawal',sans-serif;font-size:14px;font-weight:700;cursor:pointer;width:100%;margin-bottom:8px}
+.btn-green{background:#166534;color:#fff}
+.btn-red{background:#7f1d1d;color:#fff}
+.btn-gray{background:#374151;color:#fff}
+.btn-blue{background:#1e3a5f;color:#fff}
+.btn-sm{padding:5px 10px;font-size:12px;width:auto;margin-bottom:0}
+.btn-xs{padding:3px 8px;font-size:11px;width:auto;margin-bottom:0;border-radius:6px}
+input,select,textarea{background:#0f0f0f;border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'Tajawal',sans-serif;font-size:15px;padding:10px 12px;width:100%;outline:none;margin-bottom:10px}
+input:focus,select:focus,textarea:focus{border-color:#555}
+textarea{resize:vertical;min-height:60px}
+.field-lbl{font-size:12px;color:var(--muted);margin-bottom:4px}
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.stat-box{background:#0f0f0f;border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center}
+.stat-box .num{font-size:22px;font-weight:800}
+.stat-box .lbl2{font-size:11px;color:var(--muted);margin-top:3px}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:200;display:flex;align-items:flex-end;justify-content:center}
+.modal{background:var(--card);border:1px solid var(--border);border-radius:18px 18px 0 0;width:100%;max-width:600px;padding:20px;max-height:92vh;overflow-y:auto}
+.modal-title{font-size:16px;font-weight:800;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between}
+.close-btn{background:none;border:none;color:var(--muted);font-size:26px;cursor:pointer;line-height:1}
+.empty{text-align:center;color:var(--muted);padding:40px;font-size:15px}
+.mother-card{background:var(--card);border:1px solid var(--border);border-radius:12px;margin-bottom:12px;overflow:hidden}
+.mother-header{padding:12px 14px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;background:#1a1a1a}
+.mother-body{padding:12px 14px;border-top:1px solid var(--border)}
+.child-item{background:#0f0f0f;border:1px solid var(--border);border-radius:8px;padding:10px 12px;margin-bottom:7px}
+.child-item:last-child{margin-bottom:0}
+.pregnant-badge{background:#2e1065;color:var(--purple);border:1px solid var(--purple);border-radius:20px;padding:2px 8px;font-size:11px;font-weight:700}
+select option{background:#161616}
+.search-bar{background:#0f0f0f;border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'Tajawal',sans-serif;font-size:14px;padding:9px 12px;width:100%;outline:none;margin-bottom:12px}
+.divider{height:1px;background:var(--border);margin:12px 0}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script>
+firebase.initializeApp({
+  apiKey:"AIzaSyBnoAzHFAdl9qzEF27Dr4vwxPfQuzLPdxs",
+  authDomain:"camels-6a3ae.firebaseapp.com",
+  projectId:"camels-6a3ae",
+  storageBucket:"camels-6a3ae.firebasestorage.app",
+  messagingSenderId:"128006969398",
+  appId:"1:128006969398:web:55325b73b2bc8061f4e097"
+});
+var db=firebase.firestore();
+
+// ─── STATE ───
+var S={tab:"home",modal:null,mothers:{},bulls:{},expanded:{}};
+
+function uid(){return Date.now().toString(36)+Math.random().toString(36).substr(2,4);}
+function fd(s){if(!s)return"—";var d=new Date(s);return isNaN(d)?"—":d.toLocaleDateString("en-GB");}
+function today(){return new Date().toISOString().split("T")[0];}
+
+// ─── FIRESTORE ───
+async function loadData(){
+  try{
+    var ms=await db.collection("camels_mothers").get();
+    ms.forEach(d=>{S.mothers[d.id]=d.data();});
+    var bs=await db.collection("camels_bulls").get();
+    bs.forEach(d=>{S.bulls[d.id]=d.data();});
+  }catch(e){console.warn(e);}
+
+  // Seed if empty
+  if(!Object.keys(S.mothers).length) await seedData();
+  render();
+}
+
+async function seedData(){
+  // الفحول
+  var bulls=[
+    {id:"b1",name:"المهيري",number:"1",notes:""},
+    {id:"b2",name:"رعد",number:"2",notes:"مات"},
+    {id:"b3",name:"سراب راشد",number:"3",notes:""},
+    {id:"b4",name:"جبار",number:"4",notes:""},
+    {id:"b5",name:"بعير الشيوخ مزعل",number:"5",notes:""},
+    {id:"b6",name:"سراب بويه محمد",number:"6",notes:""},
+    {id:"b7",name:"الخطل",number:"7",notes:""},
+    {id:"b8",name:"ناصي",number:"8",notes:""},
+    {id:"b9",name:"ملبوس",number:"9",notes:""},
+    {id:"b10",name:"سراب بن ركاض",number:"10",notes:""},
+    {id:"b11",name:"السوداني بويه محمد",number:"11",notes:""},
+  ];
+  for(var b of bulls) await saveBull(b);
+
+  // الأمهات
+  var mothers=[
+    {n:"بنت شمردل",num:"1",notes:"أمها بنت هتاش",children:[{name:"قعود",gender:"ذكر",father:"المهيري"}]},
+    {n:"مجهولة",num:"2",notes:"",children:[{name:"قعود",gender:"ذكر",father:"رعد"}]},
+    {n:"بنت شاهين",num:"3",notes:"بعير بويه محمد — أمها سودانية",children:[{name:"بكرة",gender:"أنثى",father:"رعد"}]},
+    {n:"بنت السوداني بو حلقة",num:"4",notes:"أمها سرابة",children:[{name:"قعود",gender:"ذكر",father:"سراب راشد"}]},
+    {n:"بنت الدبلوماسي",num:"5",notes:"أمها بنت سراب — بعناها",children:[{name:"قعود",gender:"ذكر",father:"سراب راشد"}]},
+    {n:"بنت سراب المهيري",num:"6",notes:"",children:[{name:"بكرة",gender:"أنثى",father:"سراب راشد"}]},
+    {n:"بنت خوف الصغير",num:"7",notes:"أمها بنت مشهور",children:[{name:"بكرة",gender:"أنثى",father:"رعد"}]},
+    {n:"نيسة حشمة مليون",num:"8",notes:"بوها من زمول الرئاسة",children:[{name:"قعود",gender:"ذكر",father:"السوداني بويه محمد"}]},
+    {n:"بنت هملول الكبيرة",num:"9",notes:"",children:[]},
+    {n:"بنت شمردل",num:"10",notes:"",children:[{name:"بكرة",gender:"أنثى",father:"سراب راشد"}]},
+    {n:"بنت أم ريشة",num:"11",notes:"",children:[{name:"قعود",gender:"ذكر",father:"جبار"}]},
+    {n:"بنت شاهين بويه محمد",num:"12",notes:"أمها سودانية بلعود",children:[{name:"بكرة",gender:"أنثى",father:"جبار"}]},
+    {n:"خت الفاتنة",num:"13",notes:"",children:[{name:"بكرة",gender:"أنثى",father:"بعير الشيوخ مزعل"}]},
+    {n:"بنت ناقة العبوز",num:"14",notes:"بوها شاهين ولد الحذرة",children:[{name:"قعود",gender:"ذكر",father:"بعير الشيوخ مزعل"}]},
+    {n:"زاخر",num:"15",notes:"",children:[{name:"حاشي",gender:"ذكر",father:"سراب بويه محمد"}]},
+    {n:"أم أذن مقطوعة",num:"16",notes:"",children:[{name:"حاشي",gender:"ذكر",father:"سراب بويه محمد"}]},
+    {n:"بنت شاهين بويه محمد أم خرزة",num:"17",notes:"",children:[{name:"قعود",gender:"ذكر",father:"رعد"}]},
+    {n:"بنت شاهين همدان شعر ملفوف",num:"18",notes:"أمها ناقة بلعود",children:[{name:"بكرة",gender:"أنثى",father:"سراب راشد"}]},
+    {n:"أم ريل مكسورة",num:"19",notes:"",children:[{name:"حشي",gender:"ذكر",father:"سراب بويه محمد"}]},
+    {n:"بنت شمردل",num:"20",notes:"",children:[{name:"بكرة",gender:"أنثى",father:"جبار"}]},
+    {n:"بنت بعير العميمي السودان",num:"21",notes:"",children:[{name:"بكرة",gender:"أنثى",father:"جبار"}]},
+    {n:"من زمول الفقع مجهولة",num:"22",notes:"",children:[{name:"بكرة",gender:"أنثى",father:"سراب راشد"}]},
+    {n:"بنت ناصي السودان",num:"23",notes:"أمها ناقة بو صر",children:[{name:"بكرة",gender:"أنثى",father:"الخطل"}]},
+    {n:"بنت هملول صغيرة",num:"24",notes:"",children:[]},
+    {n:"الكتبية بنت شاهين دغاش",num:"25",notes:"",children:[{name:"حاشي",gender:"ذكر",father:"سراب بويه محمد"}]},
+    {n:"أم بدية",num:"26",notes:"",children:[{name:"قعود",gender:"ذكر",father:"سراب راشد"}]},
+    {n:"عرقة",num:"27",notes:"",children:[{name:"قعود",gender:"ذكر",father:"السوداني بويه محمد"}]},
+    {n:"بعير همدان",num:"28",notes:"",children:[{name:"قعود",gender:"ذكر",father:"سراب راشد"}]},
+    {n:"أم بنت شمردل سنينة الذيبة",num:"29",notes:"",pregnant:true,pregnantFather:"ناصي"},
+    {n:"أم القعود وألم",num:"30",notes:"",children:[{name:"قعود",gender:"ذكر",father:"سراب راشد"}]},
+    {n:"لاقحة ٣١",num:"31",notes:"",pregnant:true,pregnantFather:"ملبوس"},
+    {n:"لاقحة ٣٢",num:"32",notes:"",pregnant:true,pregnantFather:"ملبوس"},
+    {n:"بنت الطاغي ومها الهدارة",num:"33",notes:"",pregnant:true,pregnantFather:"ناصي"},
+    {n:"بنت نوف الصغيرة",num:"34",notes:"",pregnant:true,pregnantFather:"ناصي"},
+    {n:"بنت شمردل",num:"35",notes:"",children:[]},
+    {n:"بنت نوف الكبيرة",num:"36",notes:"",pregnant:true,pregnantFather:"سراب بويه محمد"},
+    {n:"بنت ناقة محمد سهيل",num:"37",notes:"",pregnant:true,pregnantFather:"ناصي"},
+    {n:"سودانية أم 60 الف",num:"38",notes:"",pregnant:true,pregnantFather:"ناصي"},
+    {n:"بنت المفتي",num:"39",notes:"",pregnant:true,pregnantFather:"ملبوس"},
+    {n:"بوها من زمول خليفة",num:"40",notes:"",children:[]},
+    {n:"بنت بعير بن هدفة",num:"41",notes:"",pregnant:true,pregnantFather:"ناصي"},
+    {n:"ناقة أم القعود ناصي الفطيم",num:"42",notes:"",pregnant:true,pregnantFather:"ملبوس"},
+    {n:"بنت كرار الفاطر",num:"43",notes:"",pregnant:true,pregnantFather:"ملبوس"},
+    {n:"بنت شرط الصغيرة",num:"44",notes:"",pregnant:true,pregnantFather:"ناصي"},
+    {n:"ناقة محمد سهيل الفاطر",num:"45",notes:"",pregnant:true,pregnantFather:"ناصي"},
+    {n:"خت الراسية",num:"46",notes:"",pregnant:true,pregnantFather:"ناصي"},
+    {n:"بنت السوداني بو حلقة",num:"47",notes:"",pregnant:true,pregnantFather:"ملبوس"},
+    {n:"بنت سراب المهيري خت حشمة",num:"48",notes:"مبيوعة",children:[]},
+    {n:"بنت الطاغي خت سراب",num:"49",notes:"",pregnant:true,pregnantFather:"ناصي"},
+    {n:"الهدارة",num:"50",notes:"",children:[]},
+    {n:"بوها من زمول الرئاسة",num:"51",notes:"",pregnant:true,pregnantFather:"ناصي"},
+    {n:"بنت الدبلوماسي",num:"52",notes:"",pregnant:true,pregnantFather:"ناصي"},
+    {n:"لاقحة ٥٣",num:"53",notes:"",pregnant:true,pregnantFather:"ناصي"},
+    {n:"بنت سوداني بويه محمد",num:"54",notes:"أمها زاخر",pregnant:true,pregnantFather:"ناصي"},
+    {n:"بنت شاهين همدان",num:"55",notes:"",pregnant:true,pregnantFather:"ملبوس"},
+    {n:"من بنات زمول الرئاسة",num:"56",notes:"",pregnant:true,pregnantFather:"ملبوس"},
+    {n:"أم زاخر",num:"57",notes:"",pregnant:true,pregnantFather:"مابوس"},
+    {n:"بنت زاخر",num:"58",notes:"",children:[]},
+    {n:"بنت رعد خت الظبي",num:"59",notes:"",pregnant:true,pregnantFather:"ناصي"},
+    {n:"بنت شمردل",num:"60",notes:"أمها بنت شاهين دغاش",children:[]},
+    {n:"بنت شرط",num:"61",notes:"",pregnant:true,pregnantFather:"سراب بن ركاض"},
+    {n:"أم القعود ولد الصداوي",num:"62",notes:"",pregnant:true,pregnantFather:"سراب بن ركاض"},
+    {n:"أم الوسوم في يدينها",num:"63",notes:"",pregnant:true,pregnantFather:"سراب بن ركاض"},
+  ];
+
+  for(var m of mothers){
+    var id=uid();
+    var data={
+      id,
+      name:m.n,
+      number:m.num,
+      notes:m.notes||"",
+      children:m.children||[],
+      pregnant:m.pregnant||false,
+      pregnantFather:m.pregnantFather||"",
+      pregnantDate:"",
+      pregnantNotes:"",
+    };
+    await saveMother(data);
+  }
+}
+async function saveMother(m){S.mothers[m.id]=m;try{await db.collection("camels_mothers").doc(m.id).set(m);}catch(e){}render();}
+async function deleteMother(id){delete S.mothers[id];try{await db.collection("camels_mothers").doc(id).delete();}catch(e){}render();}
+async function saveBull(b){S.bulls[b.id]=b;try{await db.collection("camels_bulls").doc(b.id).set(b);}catch(e){}render();}
+async function deleteBull(id){delete S.bulls[id];try{await db.collection("camels_bulls").doc(id).delete();}catch(e){}render();}
+
+// ─── RENDER ───
+function h(tag,props){
+  var el=document.createElement(tag);
+  if(props)Object.entries(props).forEach(([k,v])=>{
+    if(k==="cls")el.className=v;
+    else if(k==="style"&&typeof v==="object")Object.assign(el.style,v);
+    else if(k[0]==="o"&&k[1]==="n")el.addEventListener(k.slice(2).toLowerCase(),v);
+    else if(k==="html")el.innerHTML=v;
+    else el.setAttribute(k,v);
+  });
+  for(var i=2;i<arguments.length;i++){
+    var c=arguments[i];
+    if(c==null)continue;
+    if(Array.isArray(c)){c.forEach(x=>{if(x!=null)el.appendChild(typeof x==="string"?document.createTextNode(x):x);});}
+    else el.appendChild(typeof c==="string"||typeof c==="number"?document.createTextNode(String(c)):c);
+  }
+  return el;
+}
+function set(p){Object.assign(S,p);render();}
+
+function render(){
+  var app=document.getElementById("app");
+  app.innerHTML="";
+  app.appendChild(rTopbar());
+  app.appendChild(rTabs());
+  var c=h("div",{cls:"content"});
+  c.appendChild(rPage());
+  app.appendChild(c);
+  if(S.modal)app.appendChild(rModal());
+}
+
+function rTopbar(){
+  var btns={home:"+ أم",bulls:"+ فحل"};
+  var actions={
+    home:()=>set({modal:{type:"addMother"}}),
+    bulls:()=>set({modal:{type:"addBull"}}),
+  };
+  return h("div",{cls:"topbar"},
+    h("div",{cls:"topbar-title"},"🐪 إدارة الإبل"),
+    actions[S.tab]?h("button",{cls:"btn btn-green btn-sm",onClick:actions[S.tab]},btns[S.tab]):h("div",{})
+  );
+}
+
+function rTabs(){
+  var bar=h("div",{cls:"tabs"});
+  [{id:"home",l:"🐪 الأمهات"},{id:"bulls",l:"🐫 الفحول"},{id:"stats",l:"📊 الإحصائيات"}]
+    .forEach(t=>bar.appendChild(h("button",{cls:"tab"+(S.tab===t.id?" active":""),onClick:()=>set({tab:t.id,modal:null})},t.l)));
+  return bar;
+}
+
+function rPage(){
+  if(S.tab==="home")return rMothers();
+  if(S.tab==="bulls")return rBulls();
+  if(S.tab==="stats")return rStats();
+  return h("div",{cls:"empty"},"قريباً");
+}
+
+// ─── MOTHERS ───
+function rMothers(){
+  var w=h("div",{});
+  var mothers=Object.values(S.mothers).sort((a,b)=>parseInt(a.number)-parseInt(b.number));
+
+  if(!mothers.length){
+    w.appendChild(h("div",{cls:"empty"},"🐪\nلا توجد أمهات بعد\nاضغط + أم لإضافة أول ناقة"));
+    return w;
+  }
+
+  // فلتر النوع
+  var typeFilter=S.typeFilter||"الكل";
+  var typBar=h("div",{style:{display:"flex",gap:"6px",marginBottom:"12px"}});
+  ["الكل","مدني","عزوف"].forEach(function(t){
+    typBar.appendChild(h("button",{
+      cls:"btn btn-sm",
+      style:{background:typeFilter===t?"#fff":"#1f2937",color:typeFilter===t?"#000":"#fff",flex:"1"},
+      onClick:()=>set({typeFilter:t})
+    },t));
+  });
+  w.appendChild(typBar);
+
+  // search
+  var si=h("input",{cls:"search-bar",type:"text",placeholder:"🔍 بحث بالاسم أو الرقم..."});
+  w.appendChild(si);
+
+  var filtered=typeFilter==="مدني"?mothers.filter(m=>m.pregnant):
+               typeFilter==="عزوف"?mothers.filter(m=>!m.pregnant&&(m.children||[]).length>0):
+               mothers;
+
+  var list=h("div",{});
+  function renderList(q){
+    list.innerHTML="";
+    var f=q?filtered.filter(m=>m.name.includes(q)||(m.number+"").includes(q)):filtered;
+    if(!f.length){list.appendChild(h("div",{cls:"empty"},"لا توجد نتائج"));return;}
+    f.forEach(m=>list.appendChild(buildMotherCard(m)));
+  }
+  si.addEventListener("input",e=>renderList(e.target.value.trim()));
+  renderList("");
+  w.appendChild(list);
+  return w;
+}
+
+function buildMotherCard(m){
+  var children=m.children||[];
+  var pregnant=m.pregnant||false;
+  var expanded=S.expanded[m.id];
+
+  var card=h("div",{cls:"mother-card"});
+
+  // header
+  var hdr=h("div",{cls:"mother-header",onClick:()=>{
+    var ex={...S.expanded};
+    ex[m.id]=!ex[m.id];
+    set({expanded:ex});
+  }});
+  hdr.appendChild(h("div",{style:{display:"flex",alignItems:"center",gap:"10px"}},
+    h("div",{style:{fontSize:"22px"}},"🐪"),
+    h("div",{},
+      h("div",{style:{fontWeight:"800",fontSize:"15px"}},m.number+". "+m.name),
+      h("div",{style:{display:"flex",gap:"6px",marginTop:"3px"}},
+        m.pregnant?h("span",{cls:"badge bg-blue"},"مدني"):
+        (m.children||[]).length>0?h("span",{cls:"badge bg-orange"},"عزوف"):h("span",{},""),
+        h("span",{style:{color:"var(--muted)",fontSize:"12px"}},"رقم: "+m.number)
+      )
+    )
+  ));
+  hdr.appendChild(h("div",{style:{display:"flex",alignItems:"center",gap:"8px"}},
+    pregnant?h("span",{cls:"pregnant-badge"},"🤰 حامل"):h("span",{},""),
+    h("span",{style:{color:"var(--muted)",fontSize:"18px"}},expanded?"▲":"▼")
+  ));
+  card.appendChild(hdr);
+
+  if(!expanded) return card;
+
+  // body
+  var body=h("div",{cls:"mother-body"});
+
+  // info
+  if(m.birthDate) body.appendChild(h("div",{cls:"row"},h("span",{cls:"lbl"},"تاريخ الميلاد"),h("span",{cls:"val"},fd(m.birthDate))));
+  if(m.notes) body.appendChild(h("div",{style:{fontSize:"12px",color:"var(--muted)",marginBottom:"10px",padding:"6px 0"}},m.notes));
+
+  // pregnant info
+  if(pregnant){
+    body.appendChild(h("div",{style:{background:"#1e1040",border:"1px solid var(--purple)",borderRadius:"8px",padding:"10px",marginBottom:"10px"}},
+      h("div",{style:{color:"var(--purple)",fontWeight:"700",fontSize:"13px",marginBottom:"6px"}},"🤰 معلومات الحمل"),
+      h("div",{cls:"row"},h("span",{cls:"lbl"},"الفحل"),h("span",{style:{fontWeight:"600"}},m.pregnantFather||"—")),
+      m.pregnantDate?h("div",{cls:"row"},h("span",{cls:"lbl"},"تاريخ التلقيح"),h("span",{},fd(m.pregnantDate))):h("div",{}),
+      m.pregnantNotes?h("div",{style:{fontSize:"12px",color:"var(--muted)",marginTop:"4px"}},m.pregnantNotes):h("div",{})
+    ));
+  }
+
+  // children
+  body.appendChild(h("div",{style:{fontWeight:"700",fontSize:"13px",marginBottom:"8px",color:"var(--muted)"}},
+    `الأولاد (${children.length})`
+  ));
+
+  if(children.length){
+    children.forEach((ch,ci)=>{
+      var chCard=h("div",{cls:"child-item"});
+      chCard.appendChild(h("div",{style:{display:"flex",justifyContent:"space-between",alignItems:"center"}},
+        h("div",{style:{display:"flex",alignItems:"center",gap:"8px"}},
+          h("span",{style:{fontSize:"18px"}},ch.gender==="ذكر"?"🐪":"🐫"),
+          h("div",{},
+            h("div",{style:{fontWeight:"700",fontSize:"14px"}},ch.name||(ch.gender==="ذكر"?"وليد":"وليدة")),
+            ch.number?h("div",{style:{fontSize:"11px",color:"var(--muted)"}},"رقم: "+ch.number):h("span",{})
+          )
+        ),
+        h("span",{cls:"badge "+(ch.gender==="ذكر"?"bg-blue":"bg-green")},ch.gender)
+      ));
+      if(ch.father) chCard.appendChild(h("div",{cls:"row"},h("span",{cls:"lbl"},"الأب"),h("span",{style:{fontSize:"13px"}},ch.father)));
+      if(ch.birthDate) chCard.appendChild(h("div",{cls:"row"},h("span",{cls:"lbl"},"تاريخ الميلاد"),h("span",{style:{fontSize:"13px"}},fd(ch.birthDate))));
+      if(ch.notes) chCard.appendChild(h("div",{style:{fontSize:"11px",color:"var(--muted)",marginTop:"4px"}},ch.notes));
+      chCard.appendChild(h("div",{style:{display:"flex",gap:"6px",marginTop:"8px"}},
+        h("button",{cls:"btn btn-gray btn-xs",onClick:()=>set({modal:{type:"editChild",mid:m.id,ci}})},"✏️ تعديل"),
+        h("button",{cls:"btn btn-red btn-xs",onClick:async()=>{
+          if(!confirm("حذف هذا الولد؟"))return;
+          var updated={...m,children:children.filter((_,i)=>i!==ci)};
+          await saveMother(updated);
+        }},"🗑 حذف")
+      ));
+      body.appendChild(chCard);
+    });
+  } else {
+    body.appendChild(h("div",{style:{color:"var(--muted)",fontSize:"13px",marginBottom:"10px"}},"لا يوجد أولاد بعد"));
+  }
+
+  // action buttons
+  body.appendChild(h("div",{cls:"divider"}));
+  body.appendChild(h("div",{style:{display:"flex",gap:"6px",flexWrap:"wrap"}},
+    h("button",{cls:"btn btn-blue btn-sm",onClick:()=>set({modal:{type:"addChild",mid:m.id}})},"+ إضافة ولد"),
+    h("button",{cls:"btn btn-gray btn-sm",onClick:()=>set({modal:{type:"editMother",mid:m.id}})},"✏️ تعديل"),
+    h("button",{cls:"btn btn-sm",style:{background:pregnant?"#166534":"#4c1d95",color:"#fff"},
+      onClick:()=>set({modal:{type:"pregnant",mid:m.id}})},
+      pregnant?"✅ تعديل الحمل":"🤰 تسجيل حمل"),
+    h("button",{cls:"btn btn-red btn-sm",onClick:async()=>{
+      if(!confirm("حذف الأم '"+m.name+"' وجميع أولادها؟"))return;
+      await deleteMother(m.id);
+    }},"🗑 حذف")
+  ));
+
+  card.appendChild(body);
+  return card;
+}
+
+// ─── BULLS ───
+function rBulls(){
+  var w=h("div",{});
+  var bulls=Object.values(S.bulls).sort((a,b)=>a.name.localeCompare(b.name));
+
+  if(!bulls.length){
+    w.appendChild(h("div",{cls:"empty"},"🐫\nلا توجد فحول بعد"));
+    return w;
+  }
+
+  bulls.forEach(b=>{
+    // count how many children this bull has
+    var count=0;
+    Object.values(S.mothers).forEach(m=>{
+      (m.children||[]).forEach(ch=>{if(ch.father===b.name)count++;});
+      if(m.pregnant&&m.pregnantFather===b.name)count++;
+    });
+    var card=h("div",{cls:"card"});
+    card.appendChild(h("div",{style:{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:"10px"}},
+      h("div",{style:{display:"flex",alignItems:"center",gap:"10px"}},
+        h("span",{style:{fontSize:"22px"}},"🐫"),
+        h("div",{},
+          h("div",{style:{fontWeight:"800",fontSize:"15px"}},b.name),
+          h("div",{style:{color:"var(--muted)",fontSize:"12px"}},"رقم: "+b.number)
+        )
+      ),
+      h("span",{cls:"badge bg-blue"},count+" ولد")
+    ));
+    if(b.birthDate) card.appendChild(h("div",{cls:"row"},h("span",{cls:"lbl"},"تاريخ الميلاد"),h("span",{},fd(b.birthDate))));
+    if(b.notes) card.appendChild(h("div",{style:{fontSize:"12px",color:"var(--muted)",margin:"6px 0"}},b.notes));
+    card.appendChild(h("div",{style:{display:"flex",gap:"6px",marginTop:"8px"}},
+      h("button",{cls:"btn btn-gray btn-sm",onClick:()=>set({modal:{type:"editBull",bid:b.id}})},"✏️ تعديل"),
+      h("button",{cls:"btn btn-red btn-sm",onClick:async()=>{
+        if(!confirm("حذف الفحل '"+b.name+"'؟"))return;
+        await deleteBull(b.id);
+      }},"🗑 حذف")
+    ));
+    w.appendChild(card);
+  });
+  return w;
+}
+
+// ─── STATS ───
+function rStats(){
+  var w=h("div",{});
+  var mothers=Object.values(S.mothers).sort((a,b)=>parseInt(a.number)-parseInt(b.number));
+  var bulls=Object.values(S.bulls);
+  var allChildren=mothers.flatMap(m=>m.children||[]);
+  var males=allChildren.filter(c=>c.gender==="ذكر").length;
+  var females=allChildren.filter(c=>c.gender==="أنثى").length;
+  var pregnant=mothers.filter(m=>m.pregnant).length;
+  // النوع يُحسب تلقائياً: مدني=حامل، عزوف=عندها ولد
+  var madani=mothers.filter(m=>m.pregnant).length;
+  var azoof=mothers.filter(m=>!m.pregnant&&(m.children||[]).length>0).length;
+
+  w.appendChild(h("div",{cls:"stat-grid"},
+    h("div",{cls:"stat-box"},h("div",{cls:"num",style:{color:"var(--orange)"}},String(mothers.length)),h("div",{cls:"lbl2"},"إجمالي الأمهات")),
+    h("div",{cls:"stat-box"},h("div",{cls:"num",style:{color:"var(--purple)"}},String(pregnant)),h("div",{cls:"lbl2"},"حوامل")),
+    h("div",{cls:"stat-box"},h("div",{cls:"num",style:{color:"var(--blue)"}},String(madani)),h("div",{cls:"lbl2"},"مدني")),
+    h("div",{cls:"stat-box"},h("div",{cls:"num",style:{color:"var(--orange)"}},String(azoof)),h("div",{cls:"lbl2"},"عزوف")),
+    h("div",{cls:"stat-box"},h("div",{cls:"num",style:{color:"var(--blue)"}},String(males)),h("div",{cls:"lbl2"},"مواليد ذكور")),
+    h("div",{cls:"stat-box"},h("div",{cls:"num",style:{color:"var(--green)"}},String(females)),h("div",{cls:"lbl2"},"مواليد إناث")),
+    h("div",{cls:"stat-box"},h("div",{cls:"num",style:{color:"var(--blue)"}},String(bulls.length)),h("div",{cls:"lbl2"},"فحول")),
+    h("div",{cls:"stat-box"},h("div",{cls:"num"},String(mothers.length+bulls.length+allChildren.length)),h("div",{cls:"lbl2"},"إجمالي الإبل"))
+  ));
+
+  // زر طباعة التقرير
+  w.appendChild(h("button",{cls:"btn btn-gray",style:{marginBottom:"16px"},onClick:function(){
+    var rows=mothers.map(function(m){
+      var children=m.children||[];
+      var childrenText=children.map(function(c){
+        return c.gender+(c.name?" ("+c.name+")":"")+(c.father?" — أبوه: "+c.father:"");
+      }).join(" | ");
+      var pregnantText=m.pregnant?"🤰 حامل من "+( m.pregnantFather||"—"):"";
+      return "<tr>"
+        +"<td style='text-align:center;font-weight:800'>"+m.number+"</td>"
+        +"<td style='font-weight:700'>"+m.name+"</td>"
+        +"<td style='text-align:center'>"+(m.pregnant?"مدني":(m.children||[]).length>0?"عزوف":"—")+"</td>"
+        +"<td style='text-align:center'>"+children.length+"</td>"
+        +"<td>"+childrenText+"</td>"
+        +"<td style='color:purple'>"+pregnantText+"</td>"
+        +"<td style='font-size:11px;color:#888'>"+( m.notes||"")+"</td>"
+        +"</tr>";
+    }).join("");
+
+    // Bull stats rows
+    var bullRows=bulls.map(function(b){
+      var count=0;
+      var pregCount=0;
+      mothers.forEach(function(m){
+        (m.children||[]).forEach(function(ch){if(ch.father===b.name)count++;});
+        if(m.pregnant&&m.pregnantFather===b.name)pregCount++;
+      });
+      return "<tr><td>"+b.name+"</td><td style='text-align:center'>"+count+"</td><td style='text-align:center;color:purple'>"+pregCount+"</td></tr>";
+    }).join("");
+
+    var pw=window.open("","_blank");
+    pw.document.write(`<!DOCTYPE html><html dir='rtl'><head><meta charset='UTF-8'>
+    <link href='https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;800&display=swap' rel='stylesheet'>
+    <style>
+      *{box-sizing:border-box}
+      body{font-family:Tajawal,Arial,sans-serif;padding:16px;direction:rtl;font-size:12px;color:#111}
+      h2{text-align:center;font-size:18px;margin-bottom:4px}
+      h3{text-align:center;color:#555;font-size:12px;font-weight:400;margin-bottom:12px}
+      .summary{display:flex;gap:8px;justify-content:center;margin-bottom:14px;flex-wrap:wrap}
+      .sum-box{border:1px solid #ddd;border-radius:6px;padding:8px 12px;text-align:center;min-width:90px}
+      .sum-box .n{font-size:18px;font-weight:800}
+      .sum-box .l{font-size:10px;color:#888;margin-top:2px}
+      h4{margin:14px 0 6px;font-size:13px;border-bottom:2px solid #333;padding-bottom:3px}
+      table{width:100%;border-collapse:collapse;margin-bottom:16px}
+      th{background:#1a1a1a;color:#fff;padding:6px 8px;font-size:11px;text-align:right}
+      td{border:1px solid #e0e0e0;padding:5px 7px;vertical-align:top}
+      tr:nth-child(even){background:#f9f9f9}
+      @media print{button{display:none!important}body{padding:8px}}
+    </style></head><body>
+    <h2>🐪 تقرير الأمهات</h2>
+    <h3>تاريخ الطباعة: ${new Date().toLocaleDateString("en-GB")} | إجمالي: ${mothers.length} ناقة</h3>
+    <div class='summary'>
+      <div class='sum-box'><div class='n'>${mothers.length}</div><div class='l'>إجمالي الأمهات</div></div>
+      <div class='sum-box'><div class='n' style='color:purple'>${pregnant}</div><div class='l'>حوامل</div></div>
+      <div class='sum-box'><div class='n' style='color:blue'>${madani}</div><div class='l'>مدني</div></div>
+      <div class='sum-box'><div class='n' style='color:orange'>${azoof}</div><div class='l'>عزوف</div></div>
+      <div class='sum-box'><div class='n' style='color:blue'>${males}</div><div class='l'>مواليد ذكور</div></div>
+      <div class='sum-box'><div class='n' style='color:green'>${females}</div><div class='l'>مواليد إناث</div></div>
+    </div>
+    <h4>🐪 قائمة الأمهات</h4>
+    <table>
+      <thead><tr><th>#</th><th>الاسم</th><th>النوع</th><th>الأولاد</th><th>تفاصيل الأولاد</th><th>الحمل</th><th>ملاحظات</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+    <h4>🐫 الفحول وأعداد الأولاد</h4>
+    <table>
+      <thead><tr><th>الفحل</th><th>عدد الأولاد</th><th>حوامل منه</th></tr></thead>
+      <tbody>${bullRows}</tbody>
+    </table>
+    <div style='text-align:center;margin-top:12px'>
+      <button onclick='window.print()' style='padding:10px 28px;font-size:14px;cursor:pointer;background:#1a1a1a;color:#fff;border:none;border-radius:8px;font-family:Tajawal'>🖨️ طباعة</button>
+    </div></body></html>`);
+    pw.document.close();
+  }},"🖨️ طباعة تقرير الأمهات"));
+
+  // الفحول
+  if(bulls.length){
+    w.appendChild(h("div",{style:{fontWeight:"800",fontSize:"14px",margin:"8px 0",color:"var(--muted)"}},"🐫 الفحول وأعداد أولادهم"));
+    bulls.forEach(b=>{
+      var count=0,pregCount=0;
+      mothers.forEach(m=>{
+        (m.children||[]).forEach(ch=>{if(ch.father===b.name)count++;});
+        if(m.pregnant&&m.pregnantFather===b.name)pregCount++;
+      });
+      w.appendChild(h("div",{cls:"card",style:{padding:"10px 14px"}},
+        h("div",{style:{display:"flex",justifyContent:"space-between"}},
+          h("span",{style:{fontWeight:"700"}},b.name),
+          h("div",{style:{display:"flex",gap:"6px"}},
+            h("span",{cls:"badge bg-blue"},count+" ولد"),
+            pregCount>0?h("span",{cls:"badge bg-purple"},pregCount+" حامل"):h("span",{})
+          )
+        )
+      ));
+    });
+  }
+
+  return w;
+}
+
+// ─── MODALS ───
+function rModal(){
+  var m=S.modal;
+  var ov=h("div",{cls:"modal-overlay",onClick:function(e){if(e.target===ov)set({modal:null});}});
+  var box=h("div",{cls:"modal"});
+  ov.appendChild(box);
+  if(m.type==="addMother"||m.type==="editMother") buildMotherForm(box,m);
+  else if(m.type==="addChild"||m.type==="editChild") buildChildForm(box,m);
+  else if(m.type==="pregnant") buildPregnantForm(box,m);
+  else if(m.type==="addBull"||m.type==="editBull") buildBullForm(box,m);
+  return ov;
+}
+
+function mTitle(box,title){
+  box.appendChild(h("div",{cls:"modal-title"},title,
+    h("button",{cls:"close-btn",onClick:()=>set({modal:null})},"×")
+  ));
+}
+
+// Mother form
+function buildMotherForm(box,m){
+  var isEdit=m.type==="editMother";
+  var existing=isEdit?S.mothers[m.mid]:{};
+  mTitle(box,isEdit?"✏️ تعديل الأم":"🐪 إضافة أم جديدة");
+  var fName=h("input",{type:"text",placeholder:"اسم الناقة *",value:existing.name||""});
+  var fNum=h("input",{type:"text",placeholder:"الرقم *",value:existing.number||""});
+  var fDate=h("input",{type:"date",value:existing.birthDate||""});
+  var fNotes=h("textarea",{placeholder:"ملاحظات...",rows:"2"},existing.notes||"");
+  [["الاسم *",fName],["الرقم *",fNum],["تاريخ الميلاد",fDate],["ملاحظات",fNotes]].forEach(([l,el])=>{
+    box.appendChild(h("div",{cls:"field-lbl"},l));
+    box.appendChild(el);
+  });
+  box.appendChild(h("button",{cls:"btn btn-green",onClick:async()=>{
+    if(!fName.value.trim()||!fNum.value.trim()){alert("يرجى إدخال الاسم والرقم");return;}
+    var id=isEdit?m.mid:uid();
+    var data={...(existing||{}),id,name:fName.value.trim(),number:fNum.value.trim(),birthDate:fDate.value,notes:fNotes.value.trim(),children:existing.children||[]};
+    await saveMother(data);
+    set({modal:null,expanded:{...S.expanded,[id]:true}});
+  }},isEdit?"💾 حفظ التعديل":"✅ إضافة"));
+}
+
+// Child form
+function buildChildForm(box,m){
+  var isEdit=m.type==="editChild";
+  var mother=S.mothers[m.mid]||{};
+  var existing=isEdit?(mother.children||[])[m.ci]:{};
+  mTitle(box,isEdit?"✏️ تعديل الولد":"+ إضافة ولد");
+  box.appendChild(h("div",{style:{color:"var(--muted)",fontSize:"13px",marginBottom:"12px"}},"الأم: "+mother.name));
+
+  var fName=h("input",{type:"text",placeholder:"اسم الولد (اختياري)",value:existing.name||""});
+  var fNum=h("input",{type:"text",placeholder:"الرقم (اختياري)",value:existing.number||""});
+  var fGender=h("select",{},h("option",{value:"ذكر"},"🐪 ذكر"),h("option",{value:"أنثى"},"🐫 أنثى"));
+  if(existing.gender)fGender.value=existing.gender;
+
+  // father selector
+  var fFather=h("select",{});
+  fFather.appendChild(h("option",{value:""},"— اختر الأب —"));
+  Object.values(S.bulls).sort((a,b)=>a.name.localeCompare(b.name)).forEach(b=>{
+    fFather.appendChild(h("option",{value:b.name},b.name+" ("+b.number+")"));
+  });
+  // manual input if bull not in list
+  var fFatherManual=h("input",{type:"text",placeholder:"أو اكتب اسم الأب يدوياً",value:""});
+  if(existing.father){
+    fFather.value=existing.father;
+    if(!fFather.value)fFatherManual.value=existing.father;
+  }
+
+  var fDate=h("input",{type:"date",value:existing.birthDate||""});
+  var fNotes=h("textarea",{placeholder:"ملاحظات...",rows:"2"},existing.notes||"");
+
+  [["الاسم",fName],["الرقم",fNum],["الجنس",fGender],["الأب (من القائمة)",fFather],["أو اكتب اسم الأب",fFatherManual],["تاريخ الميلاد",fDate],["ملاحظات",fNotes]].forEach(([l,el])=>{
+    box.appendChild(h("div",{cls:"field-lbl"},l));
+    box.appendChild(el);
+  });
+
+  box.appendChild(h("button",{cls:"btn btn-green",onClick:async()=>{
+    var fatherName=fFather.value||fFatherManual.value.trim();
+    var child={name:fName.value.trim(),number:fNum.value.trim(),gender:fGender.value,father:fatherName,birthDate:fDate.value,notes:fNotes.value.trim()};
+    var children=[...(mother.children||[])];
+    if(isEdit)children[m.ci]=child;
+    else children.push(child);
+    // إلغاء الحمل تلقائياً عند إضافة ولد جديد
+    var updatedMother={...mother,children};
+    if(!isEdit){
+      updatedMother.pregnant=false;
+      updatedMother.pregnantFather="";
+      updatedMother.pregnantDate="";
+      updatedMother.pregnantNotes="";
+    }
+    await saveMother(updatedMother);
+    set({modal:null});
+  }},isEdit?"💾 حفظ":"✅ إضافة الولد"));
+}
+
+// Pregnant form
+function buildPregnantForm(box,m){
+  var mother=S.mothers[m.mid]||{};
+  var isPreg=mother.pregnant;
+  mTitle(box,"🤰 "+(isPreg?"تعديل الحمل":"تسجيل حمل"));
+  box.appendChild(h("div",{style:{color:"var(--muted)",fontSize:"13px",marginBottom:"12px"}},"الأم: "+mother.name));
+
+  // father selector
+  var fFather=h("select",{});
+  fFather.appendChild(h("option",{value:""},"— اختر الأب —"));
+  Object.values(S.bulls).sort((a,b)=>a.name.localeCompare(b.name)).forEach(b=>{
+    fFather.appendChild(h("option",{value:b.name},b.name+" ("+b.number+")"));
+  });
+  var fFatherManual=h("input",{type:"text",placeholder:"أو اكتب اسم الأب يدوياً"});
+  if(mother.pregnantFather){
+    fFather.value=mother.pregnantFather;
+    if(!fFather.value)fFatherManual.value=mother.pregnantFather;
+  }
+  var fDate=h("input",{type:"date",value:mother.pregnantDate||today()});
+  var fNotes=h("textarea",{placeholder:"ملاحظات الحمل...",rows:"2"},mother.pregnantNotes||"");
+
+  [["أب الجنين (من القائمة)",fFather],["أو اكتب اسم الأب",fFatherManual],["تاريخ التلقيح",fDate],["ملاحظات",fNotes]].forEach(([l,el])=>{
+    box.appendChild(h("div",{cls:"field-lbl"},l));
+    box.appendChild(el);
+  });
+
+  box.appendChild(h("button",{cls:"btn btn-green",onClick:async()=>{
+    var fatherName=fFather.value||fFatherManual.value.trim();
+    await saveMother({...mother,pregnant:true,pregnantFather:fatherName,pregnantDate:fDate.value,pregnantNotes:fNotes.value.trim()});
+    set({modal:null});
+  }},"✅ حفظ الحمل"));
+
+  if(isPreg){
+    box.appendChild(h("div",{cls:"divider"}));
+    box.appendChild(h("button",{cls:"btn btn-blue",onClick:async()=>{
+      // convert pregnancy to child
+      set({modal:{type:"addChild",mid:m.mid,fromPregnant:true}});
+    }},"🐪 تحويل الحمل لمولود"));
+    box.appendChild(h("button",{cls:"btn btn-red",onClick:async()=>{
+      if(!confirm("إلغاء تسجيل الحمل؟"))return;
+      await saveMother({...mother,pregnant:false,pregnantFather:"",pregnantDate:"",pregnantNotes:""});
+      set({modal:null});
+    }},"❌ إلغاء الحمل"));
+  }
+}
+
+// Bull form
+function buildBullForm(box,m){
+  var isEdit=m.type==="editBull";
+  var existing=isEdit?S.bulls[m.bid]:{};
+  mTitle(box,isEdit?"✏️ تعديل الفحل":"🐫 إضافة فحل جديد");
+  var fName=h("input",{type:"text",placeholder:"اسم الفحل *",value:existing.name||""});
+  var fNum=h("input",{type:"text",placeholder:"الرقم *",value:existing.number||""});
+  var fDate=h("input",{type:"date",value:existing.birthDate||""});
+  var fNotes=h("textarea",{placeholder:"ملاحظات...",rows:"2"},existing.notes||"");
+  [["الاسم *",fName],["الرقم *",fNum],["تاريخ الميلاد",fDate],["ملاحظات",fNotes]].forEach(([l,el])=>{
+    box.appendChild(h("div",{cls:"field-lbl"},l));
+    box.appendChild(el);
+  });
+  box.appendChild(h("button",{cls:"btn btn-green",onClick:async()=>{
+    if(!fName.value.trim()||!fNum.value.trim()){alert("يرجى إدخال الاسم والرقم");return;}
+    var id=isEdit?m.bid:uid();
+    await saveBull({id,name:fName.value.trim(),number:fNum.value.trim(),birthDate:fDate.value,notes:fNotes.value.trim()});
+    set({modal:null});
+  }},isEdit?"💾 حفظ":"✅ إضافة"));
+}
+
+loadData();
+</script>
+</body>
+</html>
